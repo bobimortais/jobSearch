@@ -5,7 +5,7 @@ import json
 linkedInURL = 'https://www.linkedin.com/jobs/search/?f_TPR=r604800&geoId=103644278&keywords=remote%20java%20developer&location=United%20States&originalSubdomain=br'
 landingJobsURL = 'https://landing.jobs/jobs/search?page=1&remote=true&hd=false&t_co=false&t_st=false'
 moberriesURL = 'https://www.moberries.com/jobs-search?q=remote&category=1'
-
+jobliftURL = 'https://joblift.com/Jobs-for-remote%20software-the-last-7-days'
 
 def printLinkedInJobs(jobs):
 	for index in range(1, len(jobs)):
@@ -43,6 +43,18 @@ def printMoberriesJobs(jobs):
 		print('Job Link: ' + jobLink)
 		print('\n')
 	
+def printJobliftJobs(jobs):
+	jobs = jobs.split('jobItem">')
+	for index in range(1, len(jobs)):
+		jobTitle = jobs[index].split('jobTitleLink')[1].split('>')[1].split('<')[0]
+		company = jobs[index].split('job__infos">')[1].split('<span>')[1].split('<')[0]
+		location = jobs[index].split('job__infos">')[1].split('</span>')[1].split('>')[1]
+		jobLink = 'https://joblift.com' + jobs[index].split('jobLink')[1].split('href="')[1].split(';')[0]
+		print('Title: ' + jobTitle)
+		print('Company: ' + company)
+		print('Location: ' + location)
+		print('Job Link: ' + jobLink)
+		print('\n')
 		
 def searchJobsFromURL(url):
 	URL = url
@@ -65,3 +77,8 @@ printLandingJobsJobs(jobs)
 responseTOString = searchJobsFromURL(moberriesURL)
 jobs = responseTOString.split('job-list')[1]
 printMoberriesJobs(jobs)
+
+#Joblift
+responseTOString = searchJobsFromURL(jobliftURL)
+jobs = responseTOString.split('searchresult__resultlist">')[1]
+printJobliftJobs(jobs)
