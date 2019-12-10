@@ -2,7 +2,7 @@ import requests
 import json
 
 #URLs to Search
-linkedInURL = 'https://www.linkedin.com/jobs/search/?f_TPR=r604800&geoId=103644278&keywords=remote%20java%20developer&location=United%20States&originalSubdomain=br'
+linkedInURL = 'https://www.linkedin.com/jobs/search/?keywords=remote%20java%20developer&location=Netherlands'
 landingJobsURL = 'https://landing.jobs/jobs/search?page=1&remote=true&hd=false&t_co=false&t_st=false'
 moberriesURL = 'https://www.moberries.com/jobs-search?q=remote&category=1'
 jobliftURL = 'https://joblift.com/Jobs-for-remote%20software-the-last-7-days'
@@ -10,13 +10,17 @@ jobliftURL = 'https://joblift.com/Jobs-for-remote%20software-the-last-7-days'
 def getLinkedInJobs(jobs):
 	formattedJobs = []
 	for index in range(1, len(jobs)):
-		jobTitle = jobs[index].split('job-result-card__title">')[1].split('<')[0]
-		company = jobs[index].split('job-result-card__subtitle-link')[1].split('>')[1].split('<')[0]
-		location = jobs[index].split('job-result-card__location">')[1].split('<')[0]
-		jobLink = 'http://linkedin.com/jobs/view/' + jobs[index].split('data-id="')[1].split('"')[0]
-		timePosted = jobs[index].split('job-result-card__listdate')[1].split('>')[1].split('<')[0]
-		newJob = {"title" : jobTitle, "company" : company, "location" : location, "joblink" : jobLink, "timePosted" : timePosted}
-		formattedJobs.append(newJob)
+	
+		try:
+			jobTitle = jobs[index].split('job-result-card__title">')[1].split('<')[0]
+			company = jobs[index].split('job-result-card__subtitle-link')[1].split('>')[1].split('<')[0]
+			location = jobs[index].split('job-result-card__location">')[1].split('<')[0]
+			jobLink = 'http://linkedin.com/jobs/view/' + jobs[index].split('data-id="')[1].split('"')[0]
+			timePosted = jobs[index].split('job-result-card__listdate')[1].split('>')[1].split('<')[0]
+			newJob = {"title" : jobTitle, "company" : company, "location" : location, "joblink" : jobLink, "timePosted" : timePosted}
+			formattedJobs.append(newJob)
+		except:
+			print('Error parsing response for linkedIn Job\n')
 	return formattedJobs
 		
 def getLandingJobsJobs(jobs):
@@ -30,24 +34,31 @@ def getMoberriesJobs(jobs):
 	formattedJobs = []
 	jobs = jobs.split('media">')
 	for index in range(1, len(jobs)):
-		jobTitle = jobs[index].split('<a')[1].split('>')[1].split('<')[0]
-		company = jobs[index].split('span>')[1].split('<')[0]
-		location = jobs[index].split('tag-list">')[1].split('</i>')[1].split('</span>')[0].split('>')[1]
-		jobLink = 'https://www.moberries.com/job/' + jobs[index].split('/job/')[1].split('"')[0]
-		newJob = {"title" : jobTitle, "company" : company, "location" : location, "joblink" : jobLink, "timePosted" : ""}
-		formattedJobs.append(newJob)
+		try:
+			jobTitle = jobs[index].split('<a')[1].split('>')[1].split('<')[0]
+			company = jobs[index].split('span>')[1].split('<')[0]
+			location = jobs[index].split('tag-list">')[1].split('</i>')[1].split('</span>')[0].split('>')[1]
+			jobLink = 'https://www.moberries.com/job/' + jobs[index].split('/job/')[1].split('"')[0]
+			newJob = {"title" : jobTitle, "company" : company, "location" : location, "joblink" : jobLink, "timePosted" : ""}
+			formattedJobs.append(newJob)
+		except:
+			print('Error parsing response for Moberries job\n')
+
 	return formattedJobs
 	
 def getJobliftJobs(jobs):
 	formattedJobs = []
 	jobs = jobs.split('jobItem">')
 	for index in range(1, len(jobs)):
-		jobTitle = jobs[index].split('jobTitleLink')[1].split('>')[1].split('<')[0]
-		company = jobs[index].split('job__infos">')[1].split('<span>')[1].split('<')[0]
-		location = jobs[index].split('job__infos">')[1].split('</span>')[1].split('>')[1]
-		jobLink = 'https://joblift.com' + jobs[index].split('jobLink')[1].split('href="')[1].split(';')[0]
-		newJob = {"title" : jobTitle, "company" : company, "location" : location, "joblink" : jobLink, "timePosted" : ""}
-		formattedJobs.append(newJob)
+		try:
+			jobTitle = jobs[index].split('jobTitleLink')[1].split('>')[1].split('<')[0]
+			company = jobs[index].split('job__infos">')[1].split('<span>')[1].split('<')[0]
+			location = jobs[index].split('job__infos">')[1].split('</span>')[1].split('>')[1]
+			jobLink = 'https://joblift.com' + jobs[index].split('jobLink')[1].split('href="')[1].split(';')[0]
+			newJob = {"title" : jobTitle, "company" : company, "location" : location, "joblink" : jobLink, "timePosted" : ""}
+			formattedJobs.append(newJob)
+		except:
+			print('Error parsing response for Joblift job\n')
 	return formattedJobs
 		
 def getDetailsFromJobs(formattedJobs):
