@@ -61,20 +61,27 @@ def getJobliftJobs(jobs):
 			print('Error parsing response for Joblift job\n')
 	return formattedJobs
 		
-def getDetailsFromJobs(formattedJobs):
+def getDetailsFromJobsLinkedIn(formattedJobs):
 	for index in range(0, len(formattedJobs)):
-		currentJob = json.loads(json.dumps(formattedJobs[index]))
-		jobUrl = currentJob['joblink']
-		jobDescription = searchJobsFromURL(jobUrl)
-		jobDescription = jobDescription.split('description__text--rich')[1].split('</section>')[0]
-		
-		if 'remote' in jobDescription.lower():
-			print('======Interesting job======')
-			print('Title: ' + currentJob['title'])
-			print('Company: ' + currentJob['company'])
-			print('Location: ' + currentJob['location'])
-			print('Job Link: ' + jobUrl)
-			print('\n')
+		try:
+			currentJob = json.loads(json.dumps(formattedJobs[index]))
+			
+			if 'linkedin' not in currentJob['joblink']:
+				continue
+				
+			jobUrl = currentJob['joblink']
+			jobDescription = searchJobsFromURL(jobUrl)
+			jobDescription = jobDescription.split('description__text--rich')[1].split('</section>')[0]
+			
+			if 'remote' in jobDescription.lower():
+				print('======Interesting job======')
+				print('Title: ' + currentJob['title'])
+				print('Company: ' + currentJob['company'])
+				print('Location: ' + currentJob['location'])
+				print('Job Link: ' + jobUrl)
+				print('\n')
+		except:
+			print('Error parsing response for LinkedIn job\n')
 			
 def printJobsInfo(formattedJobs):
 	for index in range(0, len(formattedJobs)):
@@ -118,6 +125,7 @@ formattedJobs.extend(getJobliftJobs(jobs))
 
 if userOption == 1:
 	printJobsInfo(formattedJobs)
+#Implemented only for LinkedIn jobs
 elif userOption == 2:
-	print('Not implemented yet')
+	getDetailsFromJobsLinkedIn(formattedJobs)
 	
